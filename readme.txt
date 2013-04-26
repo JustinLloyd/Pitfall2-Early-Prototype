@@ -1,11 +1,11 @@
-Pitfall II Early Prototype
-==========================
+* Welcome
+Thanks for downloading this Pitfall 2 early prototype
 
-Thanks for your interset in Pitfall 2 early prototype. This project is now hosted at https://bitbucket.org/JustinLloyd/pitfall2-early-prototype
+Visit https://bitbucket.org/JustinLloyd/pitfall2-early-prototype/overview for 
+more information and to download the latest version.
 
 
-License
-==========================
+* License
                       DO WHATEVER PUBLIC LICENSE*
    TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
 
@@ -20,8 +20,7 @@ License
  Software originally created by Justin Lloyd @ http://otakunozoku.com/
 
 
-About
-==========================
+* About
 In early 1999 I started work on an Atari 2600 Action Pack for the Gameboy Color
 which was to include H.E.R.O., Pitfall I & II, plus a bunch of other classic
 games. There was also to be an updated Pitfall II game with lots of extended
@@ -41,8 +40,7 @@ missing files, and after 13 years, what do you expect? Browsing the source
 files indicates this also a very early version of the code, nothing more than a
 simple prototype to show off some effects.
 
-Support
-==========================
+* Support
 Absolutely none provided.
 
 

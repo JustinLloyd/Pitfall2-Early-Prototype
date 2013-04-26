@@ -1,0 +1,126 @@
+#define k_TILE_HEIGHT_PIXELS	8
+#define k_ROOM_HEIGHT_TILES		6
+#define k_ROOM_HEIGHT_PIXELS	(k_TILE_HEIGHT_PIXELS*k_ROOM_HEIGHT_TILES)
+
+char *calc_screen_addr(int col, int row)
+	{
+	vram_addr = k_VRAM_START + row * 32 + col ;
+	}
+
+char *get_screen_addr()
+	{
+	screen_col = get_screen_col() ;
+	screen_row = get_screen_row() ;
+	vram_addr = k_VRAM_START + screen_row() * 32 + screen_col() ;
+	}
+
+unsigned char get_screen_row()
+	{
+	return (get_screen_y() / 8) ;
+	}
+
+unsigned char get_screen_col()
+	{
+	return (get_screen_x() / 8) ;
+	}
+
+unsigned char get_screen_x()
+	{
+	// return (world->pos_x % 256) ;
+	// screen x is always zero for pitfall 2
+	return (0) ;
+	}
+
+unsigned char get_screen_y()
+	{
+	return (world->pos_y % 256 ;) ;
+	}
+
+unsigned char get_world_row()
+	{
+	return (world->pos_y / 8) ;
+	}
+
+unsigned char get_world_col()
+	{
+	return (world->pos_x / 8) ;
+	}
+
+void scroll_map_down(int delta)
+	{
+	int	row, worldY ;
+
+	worldY = world->pos_y ;
+
+	oldRow = get_screen_row() ;
+	oldRoomRow = world->pos_y / k_ROOM_HEIGHT_PIXELS ;
+	
+	worldY += delta ;
+	maxWorldY = world->map_height - screen_height ;
+	worldY = min(worldY, maxWorldY) ;
+
+	world->pos_y = worldY ;
+	world->screen_y = get_screen_y() ;
+
+	newRow = get_screen_row() ;
+	rowDelta = newRow - oldRow ;
+	newRoomRow = world->pos_y / k_ROOM_HEIGHT_PIXELS ;
+	roomDelta = newRoomRow - oldRoomRow ;
+
+	if (roomDelta > 0)
+		{
+		// draw new room
+		room_num = 
+		draw_room(room_num, y) ;
+		}
+
+	}
+
+void scroll_map_right()
+	{
+	// this really page flips the map
+
+	}
+
+void vbl_interrupt()
+	{
+	*SCX = world->screen_x ;
+	*SCY = world->screen_y ;
+	}
+
+void draw_map()
+	{
+	int	y_pos, row ;
+
+	startRow = world->screen_row ;
+	endRow = startRow + 20 ;
+	for (row = startRow; row<endRow; row+=k_ROOM_HEIGHT_TILES)
+		{
+		draw_room(0, row) ;
+		}
+
+	}
+
+void draw_room(int room, int row)
+	{
+	extern long roomData[] ; // 32-bit integer
+	char	floor_code ;
+	char	bkg_code ;
+
+	void *roomInfo ;
+
+	roomInfo = roomData[room] ;
+	bkg_code = getBackgroundCode(roomInfo) ;
+	floor_code = getFloorCode(roomInfo) ;
+	draw_bkg(bkg_code, row) ;
+	draw_floor(floor_code, row) ;
+	init_creature(roomInfo, row) ;
+	init_item(roomInfo, row) ;
+
+	}
+
+
+void draw_bkg(int bkg, int startRow)
+	{
+	for (i=0;
+	}

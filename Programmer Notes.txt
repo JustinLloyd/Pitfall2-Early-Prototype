@@ -1,0 +1,402 @@
+Notes to Programmer:
+
+	The stack is located between $C000 and $C100
+	
+	The high ram area ($FF80 to $FFFF) is used for temporary variables in a function.
+	Obviously there may be some conflict between functions and caution should be exercised.
+	You might be able to work around this by using a macro to keep a "rolling counter" that adds up to $FFFE and then rolls back
+	over to $FF80, the likelihood of two functions using the same data space is therefore minimised.
+
+	Pitfall Harry is a dedicated group of sprites, 6 total.
+	There can be up to 4 creatures on screen simultaneously
+
+Notes for the Artist
+==========================================================================================================================================
+There are a total of sixteen palettes available. Eight of these are used for room artwork, the floor, the background the exits, features
+such as save points, ladders, water, etc. The remaining eight are used for sprites for Harry, the creatures, and items that can be collected.
+
+All objects and background components must remain the same size as their Atari 2600 VCS counterparts. 
+
+
+Special Areas in the Pitfall 2 Level 1 Map of Interest
+==========================================================================================================================================
+	When Pitfall Harry must collect a balloon, the screen should scroll to position the balloon on screen automatically.
+	When Pitfall Harry jumps across the cavern to get the diamond ring it needs to detect that Harry has jumped and rather than just "falling", he "leaps".
+	When Pitfall Harry collects the final item he does his little "victory dance".
+	When Pitfall Harry enters the screen with the Stone Rat, it immediately zips to the right of the screen, no matter which direction Harry enters from.
+
+
+How to access the hidden levels (not the Explorer's Edition level)
+==========================================================================================================================================
+After collecting all four objects, Harry needs to enter the room where
+the Diamond Ring was located, the rock wall on the left has collapsed,
+and so has the rock wall on the left in the room adjacent. This leads
+in to "area 4". A secret location in area 4 leads to area 5, which is
+the Explorer's Edition level, it is the only linear progression part of
+the game. Area 4 is a large "mayan temple" that harry can explore. There
+are two "in jokes" present, the first is that at one location Harry crosses
+a room above another that has Lara Croft (rendered in 2600 style graphics)
+running across, guns blazing, shooting at bats, that squeak and then die.
+Harry in a later room, must rescue Miss Croft from a dangling rope, where he
+scores points (just like rescuing rhonda). Harry runs on screen and when
+he reaches a certain point Lara falls from the rope and lands nearby him,
+a small love heart appears between the two, points are awarded and harry
+is made temporarily invunerable to all creatures (but can still be hurt
+when falling, etc) while surrounded by little red love hearts that twinkle
+in and out like small stars.
+
+The second "in joke" is Harry must dodge a large, rolling rock ball just like
+in Indiana Jones.
+
+Access to area 2 is achieved by swimming under the waterfall on area 1. Area
+2 is a large outdoor region where harry is in a jungle and climbing mountains.
+Cue the crocodiles, gaping pits, swinging vines, and anything else I can think
+up for a Mayan/Incan/Aztech temple.
+
+Access to area 3 is achieved by swimming through a gap in the rocks
+at the very bottom right of the first area 1 map. Area 3 is "just more
+caverns" with slightly different beasties, snakes, scorpions, bats,
+hopping frogs (ala Explorer's Edition second level). Water can be replaced
+by lava and gas bubbles can be used to both hurt Harry and carry him upwards
+to regions he cannot climb to.
+
+
+Notes on Components
+==========================================================================================================================================
+Each component has a piece of code that is executed while Harry is in the room, this code runs any special features that it has, the floor
+that has a single hole in the middle has a collision test that detects if harry is in the hole, and makes him fall through it. The ladder
+allows harry to climb up and down, jump off of it, etc. It performs the various collision tests needed for harry to navigate ladders. A
+frog runs it's "jump back and forth" code, and executes a collision test particular to the frog for harry. The condor updates it's
+animation, position along the "sine wave" path that it flies, and detects if it has collided with harry or flown off the edge of the
+screen.
+
+So, to summarise, code must be written for each type of floor, for each type of background, for all special & unique features, and all
+creatures and items.
+
+The code is executed as Floor Code, Ladder Code, Creature Code, Item Code, Unique Code, Special Code. The order is pretty much unimportant.
+
+Harry has a number of different modes, standing, running, climbing, swimming, jumping, falling.
+
+When harry jumps a count is initialised of how far harry has jumped. Once he has jumped in the down direction a set distance he goes from
+jumping mode to falling mode.
+
+If harry is in falling mode and contacts the ground then the screen shakes and he loses 100 points.
+
+If an exit is blocked by a rock face/boulder then harry can not move beyond a 19 pixel region at the horizontal edges of the screen. If
+there is nothing blocking harry's exit then at the 18 pixel region the screen flips to the next room.
+
+
+Pitfall II Components
+==========================================================================================================================================
+red cross (done)
+rock outcrop on left (done)
+rock outcrop on right (done)
+stripey rock outcrop on left /  (done)
+stripey rock outcrop on right (done)
+trees (done)
+0 = solid ground / 1 = hole in ground
+ladder (done)
+ground on right (done)
+ground on left (done)
+ground in middle (done)
+gold bar (done)
+river (done)
+toad (done)
+scorpion (done)
+bat (done)
+condor (done)
+rhonda
+quickclaw
+rodent (done)
+raj diamond
+balloon
+waterfall
+eel (done)
+river bed (done)
+filled in (done)
+
+The various components per room are represented by 16 bytes of packed data. An accessor function is used that takes a room number and
+copies room data to a temporary buffer. The data is unpacked as it is copied for easier access.
+
+Room data is stored in RAM so that is may be altered and manipulated. The bank switching on the Gameboy is taken care of by the accessor
+function for retrieving the room data.
+
+Pitfall II "Explorer's Edition" Additions
+====================
+fire ants (done)
+rabid bats (done)
+piranha (done)
+hopping frogs (done)
+
+Pitfall II "Perfect" Additions
+==========================================================================================================================================
+
+note: when harry is in neutral standing position and his nose is 36 pixels from the edge of the screen, that is the boundary before a page
+flip occurs. At <35 pixels he flips to the next screen. Harry is placed on the next screen, and in neutral standing position, the back of
+his head is 44 pixels from the edge of the screen.
+
+opening & closing pits (done)
+rope bridge (done)
+vines (to swing on) (done)
+crocodiles (done)
+collapsing floors (done)
+tunnel updrafts (done)
+lava
+lava bubbles (done)
+gas bubbles (done)
+large waterfalls (done)
+
+
+Pitfall V Addittions
+====================
+lantern
+hat (done)
+rope (done)
+snake (done)
+fire ants (done)
+
+monkeys/orangutangs, swing through trees (brachiate) or knuckle along ground
+piranha (done) (graphics are flipped -- needs fix)
+rope bridge
+vines (to swing on) (done) (used Explorer Edition code with new graphics)
+falling logs
+crocodiles (done) (same as Explorer Edition with new graphics)
+opening & closing pits (done) (use Explorer Ed. with new grpahics)
+rolling logs  (done) (use EE with new graphics)
+collapsing floors (done)
+turtles (have to step across the backs of them)
+pitfall harry crouch (done)
+pitfall harry crawl (done)
+crumbling ledges & walkways (done)
+tunnel updrafts and strong winds/currents (done)
+long underwater swim through with air meter  (done)
+"oxygen meter" (done)
+lava, basically looks like water, but it's lava, fills an entire room (done) (needs graphics)
+lava bubbles, pop up from a lava pool and injure harry (done)
+gas bubbles (act like balloons to float harry up a few levels, can be sped up & slowed down)
+stalactites & stalagmites (stalactites can fall from the ceiling) (done)
+large waterfalls (done)
+
+Bryan needs to build the levels for Pitfall 5.
+
+notes on writing pitfall 2
+==========================
+each "screen" is 45 pixels high (on the original 2600), on the c64 the "screen" is 48 pixels high, on the atari 800 I'm not sure, but it looks the same, or similar to, c64.
+
+
+Sprite Sizes
+============
+These are the un-modified sprite sizes, divide the width in half to get the Gameboy sprite size. Each sprite has been rounded to the nearest 8 pixel boundary.
+
+Gold Bar			16x16	(2x2) (4)
+Eel				16x8	(2x1) (4)
+Frog				16x16  (2x2) (4)
+Scorpion			16x16	(2x2) (4)
+Rhonda				16x24	(2x3) (6)
+Quickclaw			16x24	(2x3) (6)
+Condor				16x16	(2x2) (4)
+Bat				16x16	(2x2) (4)
+Diamond Ring			16x16	(2x2) (4)
+Balloon			16x32	(2x4) (8)
+Stone Rat			16x8	(2x1) (2)
+Pitfall Harry Standing	8x24	(1x3) (3)
+Pitfall Harry Running		(0x0) (0)
+Pitfall Harry Swimming	16x16	(2x2) (4)
+Pitfall Harry Jumping
+Pitfall Harry Climbing	16x24	(2x3) (6)
+Activision Logo (modified)	40x8	(6x1) (6)
+Score (6 digits)		48x8 or 72x8
+
+
+
+notes for drawing the levels
+=============================
+The pitfall map scrolls with a sloppy window scrolling action, it's the same as BattleTanx, Daley's, Tyco, etc. When pitfall harry reaches the edge of an invisible rectangle that is smaller than the size of the screen, the screen either page
+flips or scrolls in the appropriate direction by one complete room. Just draw at the top or bottom, invisible region of the screen, and then it will scroll on appropriately in either direction. When drawing, draw an entire room, 48 pixels, or 6 screen rows/tiles in the invisible region at top and bottom, and the 20 visible tiles will fit in the
+Gameboy VRAM perfectly.
+
+Draw the Activision logo and score as sprites.
+
+In the C64 version there can be a maximum of 5 creates, plus Harry, plus treasure, on screen at once. This is a
+total of 5 creatures (4 sprites per creature), plus harry (6 sprites), plus two treasures (4 sprites per treasure)
+for a total of 34 sprites. The score will take up 10 sprites, six digits, each digit is 1.5 tiles in size. The ATVI
+logo can take up a further 10 sprites, this allows a full 144 pixels used for screen display, the maximum playfield area. The sprites top and bottom can be multiplexed with the regular sprites.
+
+A command to draw the screen draws all the rooms that can appear on a single screen, 3 rooms. The DrawRoom function
+takes a room number, calculates the vram address, and then draws each component. Each component takes a vram address
+and adds an offset to that before block copying a sequence of tiles to the vram.
+
+
+void draw_screen(int room_num)
+	{
+	int	n ;
+
+	n = min(rooms_high, room_num+vertical_rooms_per_screen) ;
+	// draw the screen with room_num at the top of the screen
+	for (i=room_num; i<n; i++)
+		{
+		draw_room(i*6, i) ;
+		}
+
+	}
+
+void draw_room(int y, int room_num)
+	{
+	if (room_data & k_LADDER)
+		draw_ladder() ;
+	if (room_data & k_SOLID_FLOOR)
+		draw_solid_floor() ;
+	if (room_data & k_WATER)
+		draw_water() ;
+	}
+
+void update_room()
+	{
+	animate_water() ;
+	}
+
+
+
+Creatures/Items
+===============
+The game maintains a list of 8 objects. As each room may only contain a single object the object that is associated with the room may be chosen based on the room number modulo 8. So room 0 uses object 0, room 1 uses object 1, room 7 uses object 7, room 8 uses object 0, and room 9 uses object 1. When a room is drawn it's object is initialised to the creature or item type in the room and the "object behaviour" is started.
+
+Objects have the following data members:
+Type -- type of object, bat, condor, gold bar, eel, frog, scorpion, etc (1 byte)
+Position -- x & y position on the game screen (1 byte each coord)
+Frame -- animation frame (1 byte)
+Path -- position in path that object follows (1 byte)
+
+
+Object to player interaction is based on pixel perfect collision detection. Each object has a simple
+bounding box method for trivial rejection and because there are so few objects that are alive at any one time
+(maximum of 8) it is possible to perform collision detection against all objects every frame. If a collision
+test passes trivial rejection then the pixel perfect collision detection against a collision mask for Pitfall
+Harry and the object being collided with is used. The collision masks method assumes that no object is wider
+than 32 pixels or taller than 32 pixels and that each object is precisely those dimensions, even if it is
+much smaller.
+
+
+Pixel Perfect Collision Detection
+=================================
+typedef unsigned int UINT16;
+typedef unsigned char UINT8;
+
+typedef struct {
+    UINT16  Width;  /* sprite pixel width / 8 bits per pixel */
+    UINT16  Height;
+    UINT8   Data;       /* first byte of variable length data */
+} COLLISION_MAP;
+
+/*
+    Function: CollisionTestBitmap
+    Description:
+        Tests two objects using COLLISION_MAPs.  The upper left corner
+        of each object is specified with (x1, y1) and (x2, y2).
+*/
+BOOL CollisionTestBitmap
+    (
+    COLLISION_MAP far * Object1,
+    COLLISION_MAP far * Object2,
+    int x1,
+    int y1,
+    int x2,
+    int y2
+    )
+{
+    UINT8 far * Data1;
+    UINT8 far * Data2;
+    COLLISION_MAP far * SwapTemp;
+    int DeltaX;
+    int DeltaY;
+    int Shift;
+    int Skip;
+    UINT16 WidthCounter1;
+    UINT16 WidthCounter2;
+    UINT16 HeightCounter1;
+    UINT16 HeightCounter2;
+    UINT8 Object1Data;
+    UINT8 ShiftRegister;
+    UINT8 OldObject2Data;
+    UINT8 NewObject2Data;
+    UINT8 FinalObject2Data;
+
+    assert(Object1 != NULL);
+    assert(Object2 != NULL);
+
+    DeltaX = x2 - x1;
+    DeltaY = y2 - y1;
+
+    /* swap objects to make the algorithm work */
+    if (DeltaX &lt; 0) {
+        SwapTemp    = Object1;
+        Object1     = Object2;
+        Object2     = SwapTemp;
+        DeltaX      = -DeltaX;
+        DeltaY      = -DeltaY;
+    }
+
+    Data1           = (UINT8 far *) &amp;(Object1-&gt;Data);
+    Data2           = (UINT8 far *) &amp;(Object2-&gt;Data);
+
+    HeightCounter1  = 0;
+    HeightCounter2  = 0;
+
+    /* skip rows off the object with the least Y-value */
+    if (DeltaY &gt; 0) {
+        Data1 += Object1-&gt;Width * DeltaY;
+        HeightCounter1 += DeltaY;
+    }
+    else if (DeltaY &lt; 0) {
+        Data2 += Object2-&gt;Width * -DeltaY;
+        HeightCounter2 -= DeltaY;
+    }
+
+    Shift   = DeltaX % 8;   /* amount to shift object 2 data to right */
+    Skip    = DeltaX / 8;   /* number of bytes to skip at beginning of */
+                            /*   object 1 data line */
+
+    while (HeightCounter1 &lt; Object1-&gt;Height &amp;&amp;
+        HeightCounter2 &lt; Object2-&gt;Height) {
+
+        /* potentially skip a few bytes 'cause obj 1 is to left of obj 2 */
+        WidthCounter1   = Skip;
+        Data1           += Skip;
+
+        WidthCounter2   = 0;
+        OldObject2Data  = 0;
+
+        while (WidthCounter1 &lt; Object1-&gt;Width &amp;&amp;
+            WidthCounter2 &lt; Object2-&gt;Width) {
+
+            /* get data */
+            Object1Data     = *Data1++;
+            NewObject2Data  = *Data2++;
+            /* shift object 2 data to correct delta X differential */
+            ShiftRegister   = ((UINT16) OldObject2Data &lt;&lt; 8) |
+                (UINT16) NewObject2Data;
+            ShiftRegister   &gt;&gt;= Shift;
+            FinalObject2Data = ShiftRegister &amp; 0xFF;
+
+            /* return if we have a collision */
+            if (Object1Data &amp; FinalObject2Data) {
+                return TRUE;
+            }
+
+            OldObject2Data = NewObject2Data;
+            WidthCounter1++;
+            WidthCounter2++;
+        }
+
+        /* correct pointers at end of line */
+        Data1 += Object1-&gt;Width - WidthCounter1;
+        Data2 += Object2-&gt;Width - WidthCounter2;
+
+        HeightCounter1++;
+        HeightCounter2++;
+    }
+
+    /* we got through all that with no collision */
+    return FALSE;
+}
+
